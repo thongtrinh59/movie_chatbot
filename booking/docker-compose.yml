@@ -1,0 +1,38 @@
+version: '3.8'
+networks:
+  default:
+    external: true
+    name: mainnet
+services:
+  booking:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python main.py'
+    ports:
+      - 8005:5000
+    volumes:
+      - .:/app
+    depends_on:
+      - dbbooking
+
+  dbbooking:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: main
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data/
+    # volumes:
+    #   - ./dbdatab:/var/lib/postgresql/data/
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - 5434:5432
+
+volumes:
+  dbdatab:
+
